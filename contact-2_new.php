@@ -53,162 +53,94 @@
         <!--<![endif]-->
 
         <!-- google maps -->
-        <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
-        <script type="text/javascript">
-            //--google maps--
-            Object.keys = Object.keys || function(o) {
-                var result = [];
-                for (var name in o) {
-                    if (o.hasOwnProperty(name))
-                        result.push(name);
-                }
-                return result;
-            };
+        <script src="http://maps.googleapis.com/maps/api/js"></script>
+        <script type="text/javascript" src="js/infobox.js"></script>
 
-            jQuery(document).ready(function($) {
+        <script>
 
-                // send message
-                var form = $(".sendMessageForm");
-                $('.errorsmsg').hide();
-                $('.suucessmsg').hide();
+            function initialize() {
 
-                form.on("submit", function(event) {
-                    $(".loadingbtn").button('loading');
+                //add map, the type of map
+                var map = new google.maps.Map(document.getElementById('GoogleMap'), {
+                    zoom: 5,
+                    center: new google.maps.LatLng(-0.664934, 118.302096),
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                });
 
-                    event.preventDefault();
-
-                    $.ajax({
-                        type: "POST",
-                        url: form.attr('action'),
-                        data: form.serialize(),
-                        success: function(response) {
-                            if (response == "success") {
-                                $('.errorsmsg').slideUp();
-                                $('.suucessmsg').slideDown();
+                //add locations
+                var locations = [
+                <?php
+                    $sql = 'SELECT * FROM lokasi WHERE 1 = 1';
+                    if (isset($_POST["inpCkb"]) !== false) {
+                        $arrCk = $_POST["inpCkb"];
+                        for ($i = 0; $i < count($arrCk); $i++) {
+                            if ($i == 0) {
+                                $sql .= ' AND unit_kerja like "' . $arrCk[$i] . ' %" ';
+                            } else {
+                                $sql .= ' OR unit_kerja like "' . $arrCk[$i] . ' %" ';
                             }
-                            else {
-                                $('.suucessmsg').slideUp();
-                                $('.errorsmsg').slideDown();
-                            }
-                            console.log(response);
-                            $(".loadingbtn").button('reset');
                         }
-                    });
-                });
-
-                var zoomLevel = parseFloat($('#GoogleMap').attr('data-zoom-level'));
-                var centerlat = parseFloat($('#GoogleMap').attr('data-center-lat'));
-                var centerlng = parseFloat($('#GoogleMap').attr('data-center-lng'));
-                var markerImg = $('#GoogleMap').attr('data-marker-img');
-                var enableZoom = $('#GoogleMap').attr('data-enable-zoom');
-                var enableAnimation = $('#GoogleMap').attr('data-enable-animation');
-                var animationDelay = 0;
-
-                if (isNaN(zoomLevel)) {
-                    zoomLevel = 5;
-                }
-                if (isNaN(centerlat)) {
-                    centerlat = -0.664934;
-                }
-                if (isNaN(centerlng)) {
-                    centerlng = 118.302096;
-                }
-                if (typeof enableAnimation != 'undefined' && enableAnimation == 1 && $(window).width() > 690) {
-                    animationDelay = 180;
-                    enableAnimation = google.maps.Animation.BOUNCE
-                } else {
-                    enableAnimation = null;
-                }
-
-                var latLng = new google.maps.LatLng(centerlat, centerlng);
-
-                var mapOptions = {
-                    center: latLng,
-                    zoom: zoomLevel,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP,
-                    scrollwheel: false,
-                    panControl: false,
-                    zoomControl: enableZoom,
-                    zoomControlOptions: {
-                        style: google.maps.ZoomControlStyle.LARGE,
-                        position: google.maps.ControlPosition.LEFT_CENTER
-                    },
-                    mapTypeControl: false,
-                    scaleControl: false,
-                    streetViewControl: false
-
-                };
-
-                var map = new google.maps.Map(document.getElementById("GoogleMap"), mapOptions);
-                var infoWindows = [];
-                google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-                    //don't start the animation until the marker image is loaded if there is one
-                    setMarkers(map);
-                });
-
-                function setMarkers(map) {
-                    for (var i = 1; i <= Object.keys(map_data).length; i++) {
-                        var markerImgLoad = new Image();
-                        markerImgLoad.src = markerImg;
-                        (function(i) {
-                            setTimeout(function() {
-                                var marker = new google.maps.Marker({
-                                    position: new google.maps.LatLng(map_data[i].lat, map_data[i].lng),
-                                    map: map,
-                                    infoWindowIndex: i - 1,
-                                    animation: enableAnimation,
-                                    icon: markerImg,
-                                    optimized: false
-                                });
-                                setTimeout(function() {
-                                    marker.setAnimation(null);
-                                }, 1000);
-                                //infowindows 
-                                var infowindow = new google.maps.InfoWindow({
-                                    content: map_data[i].mapinfo,
-                                    maxWidth: 1000
-                                });
-                                infoWindows.push(infowindow);
-                                google.maps.event.addListener(marker, 'click', (function(marker, i) {
-                                    return function() {
-                                        infoWindows[this.infoWindowIndex].open(map, this);
-                                    }
-
-                                })(marker, i));
-                            }, i * animationDelay);
-                        }(i));
-                    }//end for loop
-                }//setMarker
-
-            });
-            /* <![CDATA[ */
-            var map_data = {
-            <?php
-            $sql = 'SELECT * FROM lokasi_copy WHERE 1 = 1';
-            if (isset($_POST["inpCkb"]) !== false) {
-                $arrCk = $_POST["inpCkb"];
-                for ($i = 0; $i < count($arrCk); $i++) {
-                    if ($i == 0) {
-                        $sql .= ' AND unit_kerja like "' . $arrCk[$i] . ' %" ';
-                    } else {
-                        $sql .= ' OR unit_kerja like "' . $arrCk[$i] . ' %" ';
                     }
+                    $mySql = mysql_query($sql) or die();
+                    $txt = '';
+                    $x = 1;
+                    while ($p = mysql_fetch_array($mySql)) {
+                        $gbr = '';
+                        $arrTxtUnit = explode(' ', $p['unit_kerja']);
+                        switch ($arrTxtUnit[0]) {
+                            case 'KP':
+                                $gbr = 'http://labs.google.com/ridefinder/images/mm_20_yellow.png';
+                                break;
+                            case 'KPC':
+                                $gbr = 'http://labs.google.com/ridefinder/images/mm_20_blue.png';
+                                break;
+                            case 'RMD':
+                                $gbr = 'http://labs.google.com/ridefinder/images/mm_20_grey.png';
+                                break;
+                            case 'RUKO':
+                                $gbr = 'http://labs.google.com/ridefinder/images/mm_20_green.png';
+                                break;                            
+                            default:
+                                $gbr = 'http://labs.google.com/ridefinder/images/mm_20_red.png';
+                                break;
+                        }
+                        $txt .= ',["' . $p['unit_kerja'] . '", ' . $p['lat'] . ', ' . $p['lon'] . ', "' . $gbr . '"]';
+                        $x++;
+                    }
+                    echo substr($txt, 1);
+                ?>
+//                    ['San Francisco: Power Outage', 37.7749295, -122.4194155, 'http://labs.google.com/ridefinder/images/mm_20_purple.png'],
+//                    ['Sausalito', 37.8590937, -122.4852507, 'http://labs.google.com/ridefinder/images/mm_20_red.png'],
+//                    ['Sacramento', 38.5815719, -121.4943996, 'http://labs.google.com/ridefinder/images/mm_20_green.png'],
+//                    ['Soledad', 36.424687, -121.3263187, 'http://labs.google.com/ridefinder/images/mm_20_blue.png'],
+//                    ['Shingletown', 40.4923784, -121.8891586, 'http://labs.google.com/ridefinder/images/mm_20_yellow.png']
+                ];
+
+
+                //declare marker call it 'i'
+                var marker, i;
+
+                //declare infowindow
+                var infowindow = new google.maps.InfoWindow();
+
+                //add marker to each locations
+                for (i = 0; i < locations.length; i++) {
+                    marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                        map: map,
+                        icon: locations[i][3]
+                    });
+
+                    //click function to marker, pops up infowindow
+                    google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                        return function() {
+                            infowindow.setContent(locations[i][0]);
+                            infowindow.open(map, marker);
+                        }
+                    })(marker, i));
                 }
             }
-            $mySql = mysql_query($sql) or die();
-            $txt = '';
-            $x = 1;
-            while ($p = mysql_fetch_array($mySql)) {
-                $txt .= ',"' . $x . '":{"lat":"' . $p['lat'] . '", "lng":"' . $p['lon'] . '", "mapinfo":"' . $p['unit_kerja'] . '", "icon":"images/' . $p['gambar'] . '"}';
-                $x++;
-            }
-            echo substr($txt, 1);
-            ?>
-                //"1":{"lat":"-6.930695", "lng":"107.609501", "mapinfo":"Here is our location"},
-                //"2":{"lat":"-6.947057", "lng":"107.599914", "mapinfo":"Here is our location"},
-                //"3":{"lat":"-6.913998", "lng":"107.694499", "mapinfo":"Here is our location"},
-            };
-            /* ]]> */
+            google.maps.event.addDomListener(window, 'load', initialize);
 
         </script>
 
@@ -279,7 +211,7 @@
                                             <a href="contact.php">Contact</a>
                                         </li>
                                         <li>
-                                            <a href="contact-2.php">Peta</a>
+                                            <a href="contact-2_new.php">Peta</a>
                                         </li>
                                         <li class="login formTop">
                                             <button class="formSwitcher"  data-toggle="modal" data-target="#loginModal">Login</button>
@@ -341,64 +273,82 @@
 
 
             <div class="googleMap" 
-                 data-enable-animation="5" 
-                 data-enable-zoom="1"
-
-                 id="GoogleMap"></div><!-- end of google map -->
+                 id="GoogleMap"
+                 ></div><!-- end of google map -->
 
             <section>
                 <div class="sectionWrapper">
                     <div class="container">
                         <div class="row text-center">
-                            <form action="contact-2.php" method="post">
+                            <form action="contact-2_new.php" method="post">
+<!--                                Regional&nbsp;
+                                <select>
+                                    <?php
+                                    for ($i = 1; $i <= 11; $i++) {
+                                        echo '<option value="regional_' . $i . '">Regional ' . $i . '</option>';
+                                    }
+                                    ?>
+                                </select><br>-->
+                                
+                                
                                 <input type="checkbox" name="inpCkb[]" id="KP" value="KP"
-                                       <?php if (isset($_POST["inpCkb"])) {
-                                           if (in_array('KP', $arrCk)) {
-                                               echo 'checked';
-                                           } else {
-                                               echo '';
-                                           }
-                                       } ?>>
+                                <?php
+                                if (isset($_POST["inpCkb"])) {
+                                    if (in_array('KP', $arrCk)) {
+                                        echo 'checked';
+                                    } else {
+                                        echo '';
+                                    }
+                                }
+                                ?>>
                                 <label for="KP">KP</label>
                                 <input type="checkbox" name="inpCkb[]" id="KPC" value="KPC"
-                                       <?php if (isset($_POST["inpCkb"])) {
-                                           if (in_array('KPC', $arrCk)) {
-                                               echo 'checked';
-                                           } else {
-                                               echo '';
-                                           }
-                                       } ?>>
+                                <?php
+                                if (isset($_POST["inpCkb"])) {
+                                    if (in_array('KPC', $arrCk)) {
+                                        echo 'checked';
+                                    } else {
+                                        echo '';
+                                    }
+                                }
+                                ?>>
                                 <label for="KPC">KPC</label>
                                 <input type="checkbox" name="inpCkb[]" id="RMD" value="RMD"
-<?php if (isset($_POST["inpCkb"])) {
-    if (in_array('RMD', $arrCk)) {
-        echo 'checked';
-    } else {
-        echo '';
-    }
-} ?>>
+                                <?php
+                                if (isset($_POST["inpCkb"])) {
+                                    if (in_array('RMD', $arrCk)) {
+                                        echo 'checked';
+                                    } else {
+                                        echo '';
+                                    }
+                                }
+                                ?>>
                                 <label for="RMD">RMD</label>
                                 <input type="checkbox" name="inpCkb[]" id="RUKO" value="RUKO"
-<?php if (isset($_POST["inpCkb"])) {
-    if (in_array('RUKO', $arrCk)) {
-        echo 'checked';
-    } else {
-        echo '';
-    }
-} ?>>
+                                <?php
+                                if (isset($_POST["inpCkb"])) {
+                                    if (in_array('RUKO', $arrCk)) {
+                                        echo 'checked';
+                                    } else {
+                                        echo '';
+                                    }
+                                }
+                                ?>>
                                 <label for="RUKO">RUKO</label>
                                 <input type="checkbox" name="inpCkb[]" id="TAKOS" value="TAKOS"
-<?php if (isset($_POST["inpCkb"])) {
-    if (in_array('TAKOS', $arrCk)) {
-        echo 'checked';
-    } else {
-        echo '';
-    }
-} ?>>
+                                <?php
+                                if (isset($_POST["inpCkb"])) {
+                                    if (in_array('TAKOS', $arrCk)) {
+                                        echo 'checked';
+                                    } else {
+                                        echo '';
+                                    }
+                                }
+                                ?>>
                                 <label for="TAKOS">TAKOS</label>
                                 <button class="generalBtn loginBtn" type="submit">Cari</button>
                             </form>                           
-<?php echo $sql; ?>
+                            <?php // echo $sql; ?>
                         </div>
                     </div>
             </section>
