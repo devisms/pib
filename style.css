@@ -6539,12 +6539,16 @@ img.fnone {
 }
 /* --- Contact --------------------- */
 /* google map */
-#GoogleMap {
-  width: 100% !important;
-  height: 480px;
-  position: relative;
+#GoogleMap1 {
+  width: 80% !important;  
+  position: absolute;
+  float: left;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;      
 }
-.contact #GoogleMap {
+.contact {
   height: 350px;
   -webkit-border-radius: 2px 2px 2px 2px;
   -moz-border-radius: 2px 2px 2px 2px;

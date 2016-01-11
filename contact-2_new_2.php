@@ -46,6 +46,11 @@
 
         <script type="text/javascript" src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
+        <!--checkbox tree-->
+        <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+        <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+        <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
 
         <!--[if lt IE 9]><!-->
         <!-- css for ie -->
@@ -101,7 +106,7 @@ while ($p = mysql_fetch_array($mySql)) {
             $gbr = 'pin/mm_20_yellow.png';
             break;
         default:
-            $gbr = 'pin/mm_20_gray.png';
+            $gbr = 'pin/mm_20_grey.png';
             break;
     }
     $txt .= ',["' . $p['unit_kerja'] . '", ' . $p['lat'] . ', ' . $p['lon'] . ', "' . $gbr . '"]';
@@ -143,7 +148,11 @@ echo substr($txt, 1);
             google.maps.event.addDomListener(window, 'load', initialize);
 
         </script>
-
+        <style>
+            .regional{margin-left: 0px}
+            .kprk{margin-left: 20px;font-style: italic}
+            .kpc{margin-left: 40px}
+        </style>
     </head>
 
     <body id="top" class="page">
@@ -276,27 +285,26 @@ echo substr($txt, 1);
              id="GoogleMap">
 
         </div><!-- end of google map -->
+        <form action="contact-2_new.php" method="post">
+            <div style="position: absolute; top: 92px; right: 0; bottom: 0; left: 80%; padding: 10px;height: 60px;">                
                 
+            </div>
             <!--<div style="padding: 10px;width: 240px;float:right;overflow: scroll">-->
-        <div style="position: absolute; top: 92px; right: 0; bottom: 0; left: 80%;padding: 10px">
-            <form action="contact-2_new.php" method="post">
+
+            <div style="position: absolute; top: 140px; right: 0; bottom: 0; left: 80%; height: auto; overflow: scroll;padding: 10px;">
+
                 <?php
                 for ($index = 0; $index < 100; $index++) {
-//                    echo '<br>';
+//                    echo '<input type="checkbox" name="inpCkb[]" id="KP1" value="KP"><label for="KP">KP</label><br>';
                 }
                 ?>     
-                <label><strong>Parameter</strong></label><br><br>
+                <button class="generalBtn loginBtn btn-block" type="submit">Refresh Map</button>
                 
-                <input type="checkbox" name="inpCkb[]" id="KP" value="KP"
-                <?php
-                if (isset($_POST["inpCkb"])) {
-                    if (in_array('KP', $arrCk)) {
-                        echo 'checked';
-                    } else {
-                        echo '';
-                    }
-                }
-                ?>>
+                <span class="regional"><input type="checkbox" name="inp[]" id="reg1" value="Regional"><label for="reg1">Regional 1</label></span><br>
+                <span class="kprk"><input type="checkbox" name="inp[]" id="kprk1" value="Regional"><label for="kprk1">KPRK 1</label></span><br>
+                <span class="kpc"><input type="checkbox" name="inp[]" id="kpc1" value="Regional"><label for="kpc1">KPC 1</label></span><br>
+
+                <input type="checkbox" name="inpCkb[]" id="KP" value="KP">
                 <label for="KP">KP</label><br>
                 <input type="checkbox" name="inpCkb[]" id="KPC" value="KPC"
                 <?php
@@ -342,10 +350,8 @@ echo substr($txt, 1);
                        }
                        ?>>
                 <label for="TAKOS">TAKOS</label><br>                
-                <button class="generalBtn loginBtn" type="submit">Cari</button>
-            </form>                           
-            <?php // echo $sql; ?>
             </div>
+        </form>
 
 
 
