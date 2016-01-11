@@ -93,6 +93,7 @@ while ($p = mysql_fetch_array($mySql)) {
             break;
         case 'KPC':
             $gbr = 'pin/mm_20_blue.png';
+//            aaaaaaaaaaaa
             break;
         case 'RMD':
             $gbr = 'pin/mm_20_green.png';
