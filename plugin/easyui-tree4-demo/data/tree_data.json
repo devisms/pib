@@ -1,14 +1,13 @@
 [{
 	"id":1,
-	"text":"Foods",
+	"text":"KP 1",
 	"children":[{
 		"id":2,
-		"text":"Fruits",
-		"state":"closed",
+		"text":"KPRK 1",
 		"children":[{
-			"text":"apple"
+			"text":"KPC 1.0"
 		},{
-			"text":"orange"
+			"text":"KPC 1.1"
 		}]
 	},{
 		"id":3,

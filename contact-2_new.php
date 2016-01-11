@@ -70,45 +70,48 @@
                 //add locations
                 var locations = [
 <?php
-$sql = 'SELECT * FROM lokasi WHERE 1 = 1';
 if (isset($_POST["inpCkb"]) !== false) {
-    $arrCk = $_POST["inpCkb"];
-    for ($i = 0; $i < count($arrCk); $i++) {
-        if ($i == 0) {
-            $sql .= ' AND unit_kerja like "' . $arrCk[$i] . ' %" ';
-        } else {
-            $sql .= ' OR unit_kerja like "' . $arrCk[$i] . ' %" ';
+    $sql = 'SELECT * FROM m_aset WHERE id_kat_aset = 302 ';
+    if (isset($_POST["inpCkb"]) !== false) {
+        $arrCk = $_POST["inpCkb"];
+        for ($i = 0; $i < count($arrCk); $i++) {
+            if ($i == 0) {
+                $sql .= ' AND peruntukan = "' . $arrCk[$i] . '" ';
+            } else {
+                $sql .= ' OR peruntukan = "' . $arrCk[$i] . '" ';
+            }
         }
     }
-}
-$mySql = mysql_query($sql) or die();
-$txt = '';
-$x = 1;
-while ($p = mysql_fetch_array($mySql)) {
-    $gbr = '';
-    $arrTxtUnit = explode(' ', $p['unit_kerja']);
-    switch ($arrTxtUnit[0]) {
-        case 'KP':
-            $gbr = 'pin/mm_20_red.png';
-            break;
-        case 'KPC':
-            $gbr = 'pin/mm_20_blue.png';
-//            aaaaaaaaaaaa
-            break;
-        case 'RMD':
-            $gbr = 'pin/mm_20_green.png';
-            break;
-        case 'RUKO':
-            $gbr = 'pin/mm_20_yellow.png';
-            break;
-        default:
-            $gbr = 'pin/mm_20_gray.png';
-            break;
+    $mySql = mysql_query($sql) or die();
+    $txt = '';
+    $x = 1;
+    while ($p = mysql_fetch_array($mySql)) {
+        $gbr = '';
+        switch ($p['peruntukan']) {
+            case 'KP':
+                $gbr = 'pin/mm_20_blue.png';
+                break;
+            case 'KW':
+                $gbr = 'pin/mm_20_green.png';
+                break;
+            case 'KPRK':
+                $gbr = 'pin/mm_20_orange.png';
+                break;
+            case 'KPCDK':
+                $gbr = 'pin/mm_20_gray.png';
+                break;
+            case 'KPCRK':
+                $gbr = 'pin/mm_20_gray_dark.png';
+                break;
+            default:
+                $gbr = 'pin/mm_20_red.png';
+                break;
+        }
+        $txt .= ',["' . $p['nama_aset'] . '", ' . $p['lat'] . ', ' . $p['longitud'] . ', "' . $gbr . '"]';
+        $x++;
     }
-    $txt .= ',["' . $p['unit_kerja'] . '", ' . $p['lat'] . ', ' . $p['lon'] . ', "' . $gbr . '"]';
-    $x++;
+    echo substr($txt, 1);
 }
-echo substr($txt, 1);
 ?>
 //                    ['San Francisco: Power Outage', 37.7749295, -122.4194155, 'http://labs.google.com/ridefinder/images/mm_20_purple.png'],
 //                    ['Sausalito', 37.8590937, -122.4852507, 'http://labs.google.com/ridefinder/images/mm_20_red.png'],
@@ -277,8 +280,8 @@ echo substr($txt, 1);
              id="GoogleMap">
 
         </div><!-- end of google map -->
-                
-            <!--<div style="padding: 10px;width: 240px;float:right;overflow: scroll">-->
+
+        <!--<div style="padding: 10px;width: 240px;float:right;overflow: scroll">-->
         <div style="position: absolute; top: 92px; right: 0; bottom: 0; left: 80%;padding: 10px">
             <form action="contact-2_new.php" method="post">
                 <?php
@@ -287,7 +290,7 @@ echo substr($txt, 1);
                 }
                 ?>     
                 <label><strong>Parameter</strong></label><br><br>
-                
+
                 <input type="checkbox" name="inpCkb[]" id="KP" value="KP"
                 <?php
                 if (isset($_POST["inpCkb"])) {
@@ -298,55 +301,88 @@ echo substr($txt, 1);
                     }
                 }
                 ?>>
-                <label for="KP">KP</label><br>
-                <input type="checkbox" name="inpCkb[]" id="KPC" value="KPC"
+                <label for="KP">Kantor Pusat</label><br>
+                <input type="checkbox" name="inpCkb[]" id="KW" value="KW"
                 <?php
                 if (isset($_POST["inpCkb"])) {
-                    if (in_array('KPC', $arrCk)) {
+                    if (in_array('KW', $arrCk)) {
                         echo 'checked';
                     } else {
                         echo '';
                     }
                 }
                 ?>>
-                <label for="KPC">KPC</label><br>
-                <input type="checkbox" name="inpCkb[]" id="RMD" value="RMD"
+                <label for="KW">Kantor Wilayah</label><br>
+                <input type="checkbox" name="inpCkb[]" id="KW" value="KW"
                 <?php
                 if (isset($_POST["inpCkb"])) {
-                    if (in_array('RMD', $arrCk)) {
+                    if (in_array('KW', $arrCk)) {
                         echo 'checked';
                     } else {
                         echo '';
                     }
                 }
                 ?>>
-                <label for="RMD">RMD</label><br>
-                <input type="checkbox" name="inpCkb[]" id="RUKO" value="RUKO"
+                <label for="KPRK">KPRK</label><br>
+                <input type="checkbox" name="inpCkb[]" id="KPRK" value="KPRK"
                 <?php
                 if (isset($_POST["inpCkb"])) {
-                    if (in_array('RUKO', $arrCk)) {
+                    if (in_array('KPRK', $arrCk)) {
                         echo 'checked';
                     } else {
                         echo '';
                     }
                 }
                 ?>>
-                <label for="RUKO">RUKO</label><br>
-                <input type="checkbox" name="inpCkb[]" id="TAKOS" value="TAKOS"
-                       <?php
-                       if (isset($_POST["inpCkb"])) {
-                           if (in_array('TAKOS', $arrCk)) {
-                               echo 'checked';
-                           } else {
-                               echo '';
-                           }
-                       }
-                       ?>>
-                <label for="TAKOS">TAKOS</label><br>                
-                <button class="generalBtn loginBtn" type="submit">Cari</button>
+                <label for="KPRK">KPRK</label><br>
+                <input type="checkbox" name="inpCkb[]" id="KPCDK" value="KPCDK"
+                <?php
+                if (isset($_POST["inpCkb"])) {
+                    if (in_array('KPCDK', $arrCk)) {
+                        echo 'checked';
+                    } else {
+                        echo '';
+                    }
+                }
+                ?>>
+                <label for="KPCDK">KPCDK</label><br>
+                <input type="checkbox" name="inpCkb[]" id="KPCLK" value="KPCLK"
+                <?php
+                if (isset($_POST["inpCkb"])) {
+                    if (in_array('KPCLK', $arrCk)) {
+                        echo 'checked';
+                    } else {
+                        echo '';
+                    }
+                }
+                ?>>
+                <label for="KPCLK">KPCLK</label><br>   
+                <input type="checkbox" name="inpCkb[]" id="MPC" value="MPC"
+                <?php
+                if (isset($_POST["inpCkb"])) {
+                    if (in_array('MPC', $arrCk)) {
+                        echo 'checked';
+                    } else {
+                        echo '';
+                    }
+                }
+                ?>>
+                <label for="MPC">MPC</label><br> 
+                <input type="checkbox" name="inpCkb[]" id="Lainya" value=""
+                <?php
+                if (isset($_POST["inpCkb"])) {
+                    if (in_array('', $arrCk)) {
+                        echo 'checked';
+                    } else {
+                        echo '';
+                    }
+                }
+                ?>>
+                <label for="Lainya">Lainya</label><br>
+                <button class="generalBtn loginBtn btn-block" type="submit">Cari</button>
             </form>                           
             <?php // echo $sql; ?>
-            </div>
+        </div>
 
 
 
