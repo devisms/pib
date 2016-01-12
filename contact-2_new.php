@@ -69,50 +69,58 @@
 
                 //add locations
                 var locations = [
-<?php
-if (isset($_POST["inpCkb"]) !== false) {
-    $sql = 'SELECT * FROM m_aset WHERE id_kat_aset = 302 ';
-    if (isset($_POST["inpCkb"]) !== false) {
-        $arrCk = $_POST["inpCkb"];
-        for ($i = 0; $i < count($arrCk); $i++) {
-            if ($i == 0) {
-                $sql .= ' AND peruntukan = "' . $arrCk[$i] . '" ';
-            } else {
-                $sql .= ' OR peruntukan = "' . $arrCk[$i] . '" ';
-            }
-        }
-    }
-    $mySql = mysql_query($sql) or die();
-    $txt = '';
-    $x = 1;
-    while ($p = mysql_fetch_array($mySql)) {
-        $gbr = '';
-        switch ($p['peruntukan']) {
-            case 'KP':
-                $gbr = 'pin/mm_20_blue.png';
-                break;
-            case 'KW':
-                $gbr = 'pin/mm_20_green.png';
-                break;
-            case 'KPRK':
-                $gbr = 'pin/mm_20_orange.png';
-                break;
-            case 'KPCDK':
-                $gbr = 'pin/mm_20_gray.png';
-                break;
-            case 'KPCRK':
-                $gbr = 'pin/mm_20_gray_dark.png';
-                break;
-            default:
-                $gbr = 'pin/mm_20_red.png';
-                break;
-        }
-        $txt .= ',["' . $p['nama_aset'] . '", ' . $p['lat'] . ', ' . $p['longitud'] . ', "' . $gbr . '"]';
-        $x++;
-    }
-    echo substr($txt, 1);
-}
-?>
+                    <?php
+                    if (isset($_POST["inpCkb"]) !== false) {
+                        $sql = 'SELECT * FROM m_aset_copy WHERE id_kat_aset = 302 ';
+                        if (isset($_POST["inpCkb"]) !== false) {
+                            $arrCk = $_POST["inpCkb"];
+                            for ($i = 0; $i < count($arrCk); $i++) {                                
+                                if ($i == 0) {
+                                    $sql .= ' AND ';
+                                } else {
+                                    $sql .= ' OR ';
+                                }
+                                if($arrCk[$i] == ""){
+                                    $sql .= 'peruntukan is null';
+                                } else {
+                                    $sql .= 'peruntukan = "' . strtolower($arrCk[$i]) . '" ';
+                                }
+                            }
+                        }
+                        $mySql = mysql_query($sql) or die();
+                        $txt = '';
+                        $x = 1;
+                        while ($p = mysql_fetch_array($mySql)) {
+                            $gbr = '';
+                            switch (strtoupper($p['peruntukan'])) {
+                                case 'KP':
+                                    $gbr = 'pin/mm_20_blue.png';
+                                    break;
+                                case 'REGIONAL':
+                                    $gbr = 'pin/mm_20_green.png';
+                                    break;
+                                case 'KPRK':
+                                    $gbr = 'pin/mm_20_orange.png';
+                                    break;
+                                case 'KPCDK':
+                                    $gbr = 'pin/mm_20_gray.png';
+                                    break;
+                                case 'KPCLK':
+                                    $gbr = 'pin/mm_20_gray_dark.png';
+                                    break;
+                                case 'MPC':
+                                    $gbr = 'pin/mm_20_purple.png';
+                                    break;
+                                default:
+                                    $gbr = 'pin/mm_20_red.png';
+                                    break;
+                            }
+                            $txt .= ',["' . $p['nama_aset'] . '", ' . $p['lat'] . ', ' . $p['longitud'] . ', "' . $gbr . '"]';
+                            $x++;
+                        }
+                        echo substr($txt, 1);
+                    }
+                    ?>
 //                    ['San Francisco: Power Outage', 37.7749295, -122.4194155, 'http://labs.google.com/ridefinder/images/mm_20_purple.png'],
 //                    ['Sausalito', 37.8590937, -122.4852507, 'http://labs.google.com/ridefinder/images/mm_20_red.png'],
 //                    ['Sacramento', 38.5815719, -121.4943996, 'http://labs.google.com/ridefinder/images/mm_20_green.png'],
@@ -301,29 +309,20 @@ if (isset($_POST["inpCkb"]) !== false) {
                     }
                 }
                 ?>>
-                <label for="KP">Kantor Pusat</label><br>
-                <input type="checkbox" name="inpCkb[]" id="KW" value="KW"
+                <label for="KP"><img src="pin/mm_20_blue.png" height="15px"/> Kantor Pusat </label>
+                <br>                
+                <input type="checkbox" name="inpCkb[]" id="REGIONAL" value="REGIONAL"
                 <?php
                 if (isset($_POST["inpCkb"])) {
-                    if (in_array('KW', $arrCk)) {
+                    if (in_array('REGIONAL', $arrCk)) {
                         echo 'checked';
                     } else {
                         echo '';
                     }
                 }
                 ?>>
-                <label for="KW">Kantor Wilayah</label><br>
-                <input type="checkbox" name="inpCkb[]" id="KW" value="KW"
-                <?php
-                if (isset($_POST["inpCkb"])) {
-                    if (in_array('KW', $arrCk)) {
-                        echo 'checked';
-                    } else {
-                        echo '';
-                    }
-                }
-                ?>>
-                <label for="KPRK">KPRK</label><br>
+                <label for="REGIONAL"><img src="pin/mm_20_green.png" height="15px"/> Kantor Regional</label>
+                <br>
                 <input type="checkbox" name="inpCkb[]" id="KPRK" value="KPRK"
                 <?php
                 if (isset($_POST["inpCkb"])) {
@@ -334,7 +333,8 @@ if (isset($_POST["inpCkb"]) !== false) {
                     }
                 }
                 ?>>
-                <label for="KPRK">KPRK</label><br>
+                <label for="KPRK"><img src="pin/mm_20_orange.png" height="15px"/> KPRK</label>                
+                <br>
                 <input type="checkbox" name="inpCkb[]" id="KPCDK" value="KPCDK"
                 <?php
                 if (isset($_POST["inpCkb"])) {
@@ -345,7 +345,8 @@ if (isset($_POST["inpCkb"]) !== false) {
                     }
                 }
                 ?>>
-                <label for="KPCDK">KPCDK</label><br>
+                <label for="KPCDK"><img src="pin/mm_20_gray.png" height="15px"/> KPCDK</label>
+                <br>
                 <input type="checkbox" name="inpCkb[]" id="KPCLK" value="KPCLK"
                 <?php
                 if (isset($_POST["inpCkb"])) {
@@ -356,7 +357,8 @@ if (isset($_POST["inpCkb"]) !== false) {
                     }
                 }
                 ?>>
-                <label for="KPCLK">KPCLK</label><br>   
+                <label for="KPCLK"><img src="pin/mm_20_gray_dark.png" height="15px"/> KPCLK</label>
+                <br>   
                 <input type="checkbox" name="inpCkb[]" id="MPC" value="MPC"
                 <?php
                 if (isset($_POST["inpCkb"])) {
@@ -367,7 +369,8 @@ if (isset($_POST["inpCkb"]) !== false) {
                     }
                 }
                 ?>>
-                <label for="MPC">MPC</label><br> 
+                <label for="MPC"><img src="pin/mm_20_purple.png" height="15px"/> MPC</label>
+                <br> 
                 <input type="checkbox" name="inpCkb[]" id="Lainya" value=""
                 <?php
                 if (isset($_POST["inpCkb"])) {
@@ -378,10 +381,14 @@ if (isset($_POST["inpCkb"]) !== false) {
                     }
                 }
                 ?>>
-                <label for="Lainya">Lainya</label><br>
+                <label for="Lainya"><img src="pin/mm_20_red.png" height="15px"/> Lainya</label><br>
                 <button class="generalBtn loginBtn btn-block" type="submit">Cari</button>
             </form>                           
-            <?php // echo $sql; ?>
+            <?php
+            if (isset($_POST["inpCkb"]) !== false) {
+                echo $sql;
+            }
+            ?>
         </div>
 
 
