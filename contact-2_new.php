@@ -71,7 +71,7 @@
                 var locations = [
                     <?php
                     if (isset($_POST["inpCkb"]) !== false) {
-                        $sql = 'SELECT * FROM m_aset_copy WHERE id_kat_aset = 302 ';
+                        $sql = 'SELECT * FROM test WHERE 1 = 1 ';
                         if (isset($_POST["inpCkb"]) !== false) {
                             $arrCk = $_POST["inpCkb"];
                             for ($i = 0; $i < count($arrCk); $i++) {                                
@@ -81,7 +81,7 @@
                                     $sql .= ' OR ';
                                 }
                                 if($arrCk[$i] == ""){
-                                    $sql .= 'peruntukan is null';
+                                    $sql .= 'peruntukan is null or peruntukan not in ("kp","regional","kprk","kpclk","kpcdk","mpc") ';
                                 } else {
                                     $sql .= 'peruntukan = "' . strtolower($arrCk[$i]) . '" ';
                                 }
@@ -115,12 +115,15 @@
                                     $gbr = 'pin/mm_20_red.png';
                                     break;
                             }
-                            $txt .= ',["' . $p['nama_aset'] . '", ' . $p['lat'] . ', ' . $p['longitud'] . ', "' . $gbr . '"]';
+                            $txt .= ',["' . $p['kode_aset'] . '", ' . $p['lat'] . ', ' . $p['lon'] . ', "' . $gbr . '"]';
                             $x++;
                         }
                         echo substr($txt, 1);
                     }
                     ?>
+//                   
+//                   
+//                   ["3024W01700001", "3°35'31.2\"N", "98°40'43.5\"E", "pin/mm_20_red.png"]
 //                    ['San Francisco: Power Outage', 37.7749295, -122.4194155, 'http://labs.google.com/ridefinder/images/mm_20_purple.png'],
 //                    ['Sausalito', 37.8590937, -122.4852507, 'http://labs.google.com/ridefinder/images/mm_20_red.png'],
 //                    ['Sacramento', 38.5815719, -121.4943996, 'http://labs.google.com/ridefinder/images/mm_20_green.png'],
@@ -386,7 +389,7 @@
             </form>                           
             <?php
             if (isset($_POST["inpCkb"]) !== false) {
-                echo $sql;
+//                echo $sql;
             }
             ?>
         </div>
