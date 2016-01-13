@@ -88,10 +88,6 @@ include_once "library/inc.connection.php";
 
                 <!-- Header -->
                 <?php include 'menu.php'; ?> 
-
-
-
-
                 <div class="pageInfo">
                     <div class="cover"></div>
                     <div class="container">

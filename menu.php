@@ -109,7 +109,7 @@ if(isset($_POST['btnLogin'])){
                       <a href="contact.php">Contact</a>
                   </li>
                   <li>
-                    <a href="contact-2.php">Peta</a>
+                    <a href="contact-2_new.php">Peta</a>
                   </li>
                   <li class="login formTop">
                     <button class="formSwitcher"  data-toggle="modal" data-target="#loginModal">Login</button>
