@@ -260,7 +260,7 @@ include_once "library/inc.connection.php";
 
 
                 <!-- Header -->
-<?php include 'menu.php'; ?>
+                <?php include 'menu.php'; ?>
 
 
                 <!-- Page Info -->

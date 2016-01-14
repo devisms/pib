@@ -207,7 +207,7 @@
                 //"1":{"lat":"-6.930695", "lng":"107.609501", "mapinfo":"Here is our location"},
                 //"2":{"lat":"-6.947057", "lng":"107.599914", "mapinfo":"Here is our location"},
                 //"3":{"lat":"-6.913998", "lng":"107.694499", "mapinfo":"Here is our location"},
-            };
+            //};
             /* ]]> */
 
         </script>
