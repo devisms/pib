@@ -71,7 +71,7 @@
                 var locations = [
                     <?php
                     if (isset($_POST["inpCkb"]) !== false) {
-                        $sql = 'SELECT * FROM test WHERE 1 = 1 ';
+                        $sql = 'SELECT *, LOWER(peruntukan) as lwr_per FROM m_aset WHERE 1 = 1 ';
                         if (isset($_POST["inpCkb"]) !== false) {
                             $arrCk = $_POST["inpCkb"];
                             for ($i = 0; $i < count($arrCk); $i++) {                                
@@ -81,9 +81,9 @@
                                     $sql .= ' OR ';
                                 }
                                 if($arrCk[$i] == ""){
-                                    $sql .= 'peruntukan is null or peruntukan not in ("kp","regional","kprk","kpclk","kpcdk","mpc") ';
+                                    $sql .= 'lower(peruntukan) is null or lower(peruntukan) not in ("kp","regional","kprk","kpclk","kpcdk","mpc") ';
                                 } else {
-                                    $sql .= 'peruntukan = "' . strtolower($arrCk[$i]) . '" ';
+                                    $sql .= 'lower(peruntukan) = "' . strtolower($arrCk[$i]) . '" ';
                                 }
                             }
                         }
@@ -92,30 +92,30 @@
                         $x = 1;
                         while ($p = mysql_fetch_array($mySql)) {
                             $gbr = '';
-                            switch (strtoupper($p['peruntukan'])) {
-                                case 'KP':
+                            switch (trim($p['lwr_per'])) {
+                                case 'kp':
                                     $gbr = 'pin/mm_20_blue.png';
                                     break;
-                                case 'REGIONAL':
+                                case 'regional':
                                     $gbr = 'pin/mm_20_green.png';
                                     break;
-                                case 'KPRK':
+                                case 'kprk':
                                     $gbr = 'pin/mm_20_orange.png';
                                     break;
-                                case 'KPCDK':
+                                case 'kpcdk':
                                     $gbr = 'pin/mm_20_gray.png';
                                     break;
-                                case 'KPCLK':
+                                case 'kpclk':
                                     $gbr = 'pin/mm_20_gray_dark.png';
                                     break;
-                                case 'MPC':
+                                case 'mpc':
                                     $gbr = 'pin/mm_20_purple.png';
                                     break;
                                 default:
                                     $gbr = 'pin/mm_20_red.png';
                                     break;
                             }
-                            $txt .= ',["' . $p['kode_aset'] . '", ' . $p['lat'] . ', ' . $p['lon'] . ', "' . $gbr . '"]';
+                            $txt .= ',["' . $p['nama_aset'] . '", ' . $p['lat'] . ', ' . $p['longitud'] . ', "' . $gbr . '"]';
                             $x++;
                         }
                         echo substr($txt, 1);
@@ -389,7 +389,7 @@
             </form>                           
             <?php
             if (isset($_POST["inpCkb"]) !== false) {
-//                echo $sql;
+                echo $sql;
             }
             ?>
         </div>
